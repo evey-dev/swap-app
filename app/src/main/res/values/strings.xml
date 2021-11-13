@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Swap App</string>
     <string name="welcome">Welcome!</string>
+    <string name="button_log_in">Log in</string>
+    <string name="edit_text_password_hint">Password</string>
+    <string name="edit_text_username_hint">Username</string>
 </resources>
