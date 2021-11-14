@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">Swap App</string>
-    <string name="log_in_page_text">Log in</string>
+    <string name="text_login">Log in</string>
     <string name="button_confirm">Confirm</string>
-    <string name="edit_text_password_hint">Password</string>
-    <string name="edit_text_username_hint">Username</string>
+    <string name="input_password_hint">Password</string>
+    <string name="input_username_hint">Username</string>
     <string name="button_forgot_password">Forgot Password?</string>
     <string name="text_no_account">Don\'t have an account? </string>
-    <string name="button_sign_up">Sign Up</string>
+    <string name="text_signup">Sign Up</string>
+    <string name="input_repeat_password_hint">Repeat Password</string>
+    <string name="text_have_account">Have an Account? </string>
+    <string name="input_email">Email</string>
+
 </resources>
