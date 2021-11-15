@@ -15,8 +15,4 @@
 
 
     </style>
-
-    <style name="Button.Gray" parent="ThemeOverlay.AppCompat">
-        <item name="colorPrimary">#CACACA</item>
-    </style>
 </resources>
