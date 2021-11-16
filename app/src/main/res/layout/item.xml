@@ -1,0 +1,70 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="350dp"
+    android:layout_height="450dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:backgroundTint="?attr/colorPrimary"
+    android:background="@drawable/container"
+    android:elevation="5dp"
+    >
+    <ImageView
+        android:id="@+id/card_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/atlas_logo"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cardItemText1"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:text="text1"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cardItemText2"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:text="text2"/>
+
+</LinearLayout>
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:layout_gravity="center"-->
+<!--    android:layout_width="250dp"-->
+<!--    android:layout_height="170dp"-->
+<!--    android:background="@drawable/container"-->
+<!--    android:backgroundTint="?attr/colorPrimary">-->
+<!--    <ImageView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:src="@drawable/atlas_logo"/>-->
+<!--    <TextView-->
+<!--        android:id="@+id/helloText"-->
+<!--        android:textSize="40sp"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        android:layout_gravity="center"-->
+<!--        tools:text="test"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content" />-->
+
+<!--    <View-->
+<!--        android:id="@+id/item_swipe_left_indicator"-->
+<!--        android:alpha="0"-->
+<!--        android:layout_width="20dp"-->
+<!--        android:layout_height="20dp"-->
+<!--        android:layout_margin="10dp"-->
+<!--        android:background="#A5F" />-->
+
+<!--    <View-->
+<!--        android:id="@+id/item_swipe_right_indicator"-->
+<!--        android:alpha="0"-->
+<!--        android:layout_width="20dp"-->
+<!--        android:layout_height="20dp"-->
+<!--        android:layout_margin="10dp"-->
+<!--        android:layout_gravity="right"-->
+<!--        android:background="#5AF" />-->
+
+<!--</FrameLayout>-->

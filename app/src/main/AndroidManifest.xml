@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".LoginActivity"/>
+        <activity android:name=".SwipeItemsActivity"/>
         <activity android:name=".ForgotPasswordActivity"/>
     </application>
 
