@@ -28,7 +28,7 @@
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginVertical="5dp"
-            android:hint="@string/input_email"/>
+            android:hint="@string/input_email_hint"/>
 
         <EditText
             android:id="@+id/username_input"
