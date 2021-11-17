@@ -33,9 +33,10 @@ public class LoginActivity extends Activity {
             else passwordInput.setErrorEnabled(false);
             if (error) return;
         });
-//        findViewById(R.id.button_forgot_password).setOnClickListener(view -> {
-//            startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
-//        });
+        findViewById(R.id.button_forgot_password).setOnClickListener(view -> {
+            startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
+            finish();
+        });
 //        findViewById(R.id.button_sign_up).setOnClickListener(view -> {
 //            startActivity(new Intent(LoginActivity.this, SignupActivity.class));
 //        });

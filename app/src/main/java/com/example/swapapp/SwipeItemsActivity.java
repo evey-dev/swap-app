@@ -34,11 +34,11 @@ public class SwipeItemsActivity extends Activity {
 //
 //        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
         al = new ArrayList<SwipeCard>();
-        al.add(new SwipeCard("card1text1", "atlas_logo"));
+        al.add(new SwipeCard("card1text1", "atlas_logo_transparent"));
         al.add(new SwipeCard("card2text1", "ic_launcher_background"));
         al.add(new SwipeCard("card3text1", "ic_launcher_foreground"));
         al.add(new SwipeCard("card4text1", "ic_launcher_background"));
-        al.add(new SwipeCard("card5text1", "atlas_logo"));
+        al.add(new SwipeCard("card5text1", "atlas_logo_transparent"));
 
         arrayAdapter = new SwipeCardAdapter(this, getLayoutInflater(), al);
 

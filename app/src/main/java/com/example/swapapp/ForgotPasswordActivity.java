@@ -19,12 +19,10 @@ public class ForgotPasswordActivity extends Activity {
         Button button_back = findViewById(R.id.button_back);
         Button button_confirm = findViewById(R.id.button_confirm);
 
-//        button_back.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
-//            }
-//        });
+        button_back.setOnClickListener(v -> {
+            startActivity(new Intent(ForgotPasswordActivity.this, LoginActivity.class));
+            finish();
+        });
 
         button_confirm.setOnClickListener(new View.OnClickListener() {
             @Override
