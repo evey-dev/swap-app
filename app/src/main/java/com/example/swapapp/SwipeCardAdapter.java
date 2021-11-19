@@ -45,8 +45,8 @@ public class SwipeCardAdapter extends BaseAdapter {
             convertView = mLayoutInflater.inflate(R.layout.item, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.textView1 = (TextView) convertView.findViewById(R.id.cardItemText1);
-            viewHolder.textView2 = (TextView) convertView.findViewById(R.id.cardItemText2);
+//            viewHolder.textView1 = (TextView) convertView.findViewById(R.id.cardItemText1);
+//            viewHolder.textView2 = (TextView) convertView.findViewById(R.id.cardItemText2);
             viewHolder.image = (ImageView) convertView.findViewById(R.id.card_image);
 
             convertView.setTag(viewHolder);
@@ -56,8 +56,8 @@ public class SwipeCardAdapter extends BaseAdapter {
 
         SwipeCard sw = (SwipeCard) mSwipeCardArrayList.get(position);
 
-        viewHolder.textView1.setText(sw.getText1());
-        viewHolder.textView2.setText(sw.getId());
+//        viewHolder.textView1.setText(sw.getText1());
+//        viewHolder.textView2.setText(sw.getId());
         Glide.with(mContext).load(mContext.getResources().getIdentifier(sw.getId(),"drawable",mContext.getPackageName())).into(viewHolder.image);
 
         return convertView;

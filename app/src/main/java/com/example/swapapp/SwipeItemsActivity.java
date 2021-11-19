@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
@@ -21,28 +22,18 @@ public class SwipeItemsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_swipe_items);
 
-
-//        al = new ArrayList<>();
-//        al.add("php");
-//        al.add("c");
-//        al.add("python");
-//        al.add("java");
-//        al.add("html");
-//        al.add("c++");
-//        al.add("css");
-//        al.add("javascript");
-//
-//        arrayAdapter = new ArrayAdapter<>(this, R.layout.item, R.id.helloText, al );
         al = new ArrayList<SwipeCard>();
-        al.add(new SwipeCard("card1text1", "atlas_logo_transparent"));
-        al.add(new SwipeCard("card2text1", "ic_launcher_background"));
-        al.add(new SwipeCard("card3text1", "ic_launcher_foreground"));
-        al.add(new SwipeCard("card4text1", "ic_launcher_background"));
-        al.add(new SwipeCard("card5text1", "atlas_logo_transparent"));
+        al.add(new SwipeCard("very cool logo\nwhoever made this is so cool\nworth at least $2000", "atlas_logo_transparent"));
+        al.add(new SwipeCard("background thingy", "ic_launcher_background"));
+        al.add(new SwipeCard("foreground thingy", "ic_launcher_foreground"));
+        al.add(new SwipeCard("background thingy yet again", "ic_launcher_background"));
+        al.add(new SwipeCard("$2001 since its green", "atlas_logo_green"));
 
         arrayAdapter = new SwipeCardAdapter(this, getLayoutInflater(), al);
 
         SwipeFlingAdapterView flingContainer = findViewById(R.id.frame);
+        TextView text1 = findViewById(R.id.text1);
+        text1.setText(al.get(0).getText1());
 
         flingContainer.setAdapter(arrayAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
@@ -60,17 +51,19 @@ public class SwipeItemsActivity extends Activity {
                 //You also have access to the original object.
                 //If you want to use it just cast it (String) dataObject
                 Toast.makeText(SwipeItemsActivity.this, "Left!", Toast.LENGTH_SHORT).show();
+                updateCard();
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
-                Toast.makeText(SwipeItemsActivity.this, "Right!", Toast.LENGTH_SHORT).show();;
+                Toast.makeText(SwipeItemsActivity.this, "Right!", Toast.LENGTH_SHORT).show();
+                updateCard();
             }
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
                 // Ask for more data here
-                al.add(new SwipeCard("XML ".concat(String.valueOf(i)), "test"));
+                al.add(new SwipeCard("XML ".concat(String.valueOf(i)), "gradient"));
                 arrayAdapter.notifyDataSetChanged();
                 Log.d("LIST", "notified");
                 i++;
@@ -79,6 +72,9 @@ public class SwipeItemsActivity extends Activity {
             @Override
             public void onScroll(float scrollProgressPercent) {
 
+            }
+            private void updateCard() {
+                text1.setText(al.get(0).getText1());
             }
         });
 
