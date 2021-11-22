@@ -1,22 +1,29 @@
 <resources>
     <string name="app_name">Swap App</string>
     <string name="my_app_id">mystitchapp-qwern</string>
+
 <!--    Text     -->
     <string name="text_login">Log in</string>
-    <string name="button_confirm">Confirm</string>
-    <string name="button_forgot_password">Forgot Password?</string>
     <string name="text_no_account">Don\'t have an account?</string>
     <string name="text_signup">Sign Up</string>
     <string name="text_have_account">Have an Account?</string>
     <string name="text_forgot_password">Forgot Password</string>
     <string name="text_forgot_password_description">Enter your email to receive account recovery instructions</string>
-    <string name="input_back_button">back</string>
-    <string name="button_send">Send</string>
     <string name="text_email_confirmation">Password recovery successful. Please check your email.</string>
+
+<!--    Buttons  -->
+    <string name="button_send">Send</string>
+    <string name="button_forgot_password">Forgot Password?</string>
+    <string name="button_confirm">Confirm</string>
+    <string name="button_list_new">List New</string>
+    <string name="button_back">back</string>
 
 <!--    Hints    -->
     <string name="input_email_hint">Email</string>
     <string name="input_password_hint">Password</string>
     <string name="input_repeat_password_hint">Repeat Password</string>
+    <string name="input_username_hint">Username</string>
+    <string name="button_view_profile">View Profile</string>
+    <string name="text_empty_list_view">You have no items listed</string>
 
 </resources>

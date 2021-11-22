@@ -2,9 +2,11 @@ package com.example.swapapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -18,12 +20,14 @@ public class LoginActivity extends Activity {
     private FirebaseAuth auth;
     TextInputLayout emailInput;
     TextInputLayout passwordInput;
+    boolean result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        result = false;
         auth = FirebaseAuth.getInstance();
         emailInput = findViewById(R.id.email_input);
         passwordInput = findViewById(R.id.password_input);
@@ -44,6 +48,9 @@ public class LoginActivity extends Activity {
             else passwordInput.setErrorEnabled(false);
             if (error) return;
             loginUser(email, password);
+            if (!result) return;
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+            finish();
         });
 
         findViewById(R.id.button_forgot_password).setOnClickListener(view -> {
@@ -73,7 +80,7 @@ public class LoginActivity extends Activity {
                         }
                     }
                     else
-                        Toast.makeText(LoginActivity.this, "log in completed", Toast.LENGTH_SHORT).show();
+                        result = true;
                 });
     }
 }

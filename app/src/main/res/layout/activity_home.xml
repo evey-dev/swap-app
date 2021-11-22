@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/atlas_logo_green"
+        android:layout_gravity="center"
+        android:layout_marginVertical="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:layout_marginHorizontal="20dp"
+        android:background="@drawable/container"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:id="@+id/user_welcome"
+            tools:text="Welcome {user}!"
+            android:textSize="25sp"
+            android:layout_marginVertical="10dp"/>
+
+        <Button
+            android:id="@+id/button_view_profile"
+            android:layout_width="150dp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/container"
+            android:backgroundTint="#CACACA"
+            android:text="@string/button_view_profile"
+            android:elevation="5dp"
+            android:stateListAnimator="@null"
+            android:layout_marginVertical="10dp"/>
+    </LinearLayout>
+    <ListView
+        android:id="@+id/item_list"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:background="@drawable/container"
+        android:layout_margin="20dp"
+        android:elevation="5dp">
+    </ListView>
+    <TextView
+        android:id="@+id/empty_list_text"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:background="@drawable/container"
+        android:layout_margin="20dp"
+        android:elevation="5dp"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:text="@string/text_empty_list_view" />
+    <Button
+        android:id="@+id/button_list_new"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:background="@drawable/container"
+        android:backgroundTint="?attr/colorPrimary"
+        android:text="@string/button_list_new"
+        android:elevation="5dp"
+        android:stateListAnimator="@null"/>
+
+
+
+</LinearLayout>

@@ -5,18 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.google.firebase.ktx.Firebase;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignupActivity extends Activity {
     private FirebaseAuth auth;
     TextInputLayout passwordInput;
+    TextInputLayout usernameInput;
     TextInputLayout emailInput;
     TextInputLayout repeatInput;
     boolean result;
@@ -28,15 +29,22 @@ public class SignupActivity extends Activity {
 
         auth = FirebaseAuth.getInstance();
         result = false;
+        usernameInput = findViewById(R.id.username_input);
         emailInput = findViewById(R.id.email_input);
         repeatInput = findViewById(R.id.input_repeat_password_hint);
         passwordInput = findViewById(R.id.password_input);
 
         findViewById(R.id.button_confirm).setOnClickListener(view -> {
             boolean error = false;
+            String username = usernameInput.getEditText().getText().toString();
             String email = emailInput.getEditText().getText().toString();
             String password = passwordInput.getEditText().getText().toString();
             String repeat_password = repeatInput.getEditText().getText().toString();
+            if (TextUtils.isEmpty(username)) {
+                usernameInput.setError("Please enter your username");
+                error = true;
+            }
+            else emailInput.setErrorEnabled(false);
             if (TextUtils.isEmpty(email)) {
                 emailInput.setError("Please enter your email");
                 error = true;
@@ -58,6 +66,8 @@ public class SignupActivity extends Activity {
             if (error) return;
             registerUser(email, password);
             if (!result) return;
+            startActivity(new Intent(SignupActivity.this, HomeActivity.class));
+            finish();
         });
 
         findViewById(R.id.button_log_in).setOnClickListener(view -> {
@@ -68,8 +78,15 @@ public class SignupActivity extends Activity {
 
     private void registerUser(String email, String password) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(SignupActivity.this, task -> {
-            if (task.isSuccessful())
+            if (task.isSuccessful()) {
                 result = true;
+                FirebaseDatabase db = FirebaseDatabase.getInstance();
+                DatabaseReference dbRef = db.getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                dbRef.child("username").setValue(usernameInput.getEditText().getText().toString());
+                dbRef.child("email").setValue(email);
+                dbRef.child("password").setValue(password);
+            }
             if(!task.isSuccessful()) {
                 try {
                     throw task.getException();

@@ -42,7 +42,7 @@ public class SwipeCardAdapter extends BaseAdapter {
         ViewHolder viewHolder;
 
         if(convertView == null){
-            convertView = mLayoutInflater.inflate(R.layout.item, parent, false);
+            convertView = mLayoutInflater.inflate(R.layout.swipe_item, parent, false);
 
             viewHolder = new ViewHolder();
 //            viewHolder.textView1 = (TextView) convertView.findViewById(R.id.cardItemText1);
