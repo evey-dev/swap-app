@@ -6,9 +6,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
-
 import java.util.ArrayList;
 
 public class SwipeItemsActivity extends Activity {

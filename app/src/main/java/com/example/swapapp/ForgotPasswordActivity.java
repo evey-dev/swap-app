@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -36,13 +35,11 @@ public class ForgotPasswordActivity extends Activity {
             else {
                 email_input.setErrorEnabled(false);
 
-
                 firebaseAuth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
                     if(task.isSuccessful())
                         text_email_confirm.setVisibility(View.VISIBLE);
-                    else {
+                    else
                         email_input.setError(task.getException().getMessage());
-                    }
                 });
             }
         });
