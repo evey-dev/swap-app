@@ -2,6 +2,8 @@ package com.example.swapapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -11,7 +13,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import org.w3c.dom.Text;
+import java.io.File;
+import java.io.IOException;
 
 public class MyProfileActivity extends Activity {
 
@@ -32,7 +38,19 @@ public class MyProfileActivity extends Activity {
         });
 
         ImageView pfp = (ImageView) findViewById(R.id.image_user_pfp);
-        //pfp.setImageDrawable(user.getPhotoUrl()); getPhotoUrl returns a Uri object
+        dbRef.child("profile_image").get().addOnCompleteListener(task -> {
+            StorageReference photoReference = FirebaseStorage.getInstance().getReference().child(String.valueOf(task.getResult().getValue()));
+            try {
+                final File localFile = File.createTempFile("temp","jpg");
+                photoReference.getFile(localFile)
+                        .addOnSuccessListener(taskSnapshot -> {
+                            Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
+                            pfp.setImageBitmap(bitmap);
+                        });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         dbRef.child("username").get().addOnCompleteListener(task ->
                 ((TextView) findViewById(R.id.text_display_username)).setText(task.getResult().getValue().toString())
@@ -47,7 +65,7 @@ public class MyProfileActivity extends Activity {
 
         TextInputLayout description = findViewById(R.id.input_description);
         dbRef.child("description").get().addOnCompleteListener(task ->
-                ((TextInputLayout) findViewById(R.id.input_description)).setText(task.getResult().getValue().toString())
+                ((TextInputLayout) findViewById(R.id.input_description)).getEditText().setText(task.getResult().getValue().toString())
         );
 
         button_save.setOnClickListener(view -> {
