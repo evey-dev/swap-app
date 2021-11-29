@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -52,12 +53,11 @@ public class MyProfileActivity extends Activity {
             }
         });
 
-        dbRef.child("username").get().addOnCompleteListener(task ->
-                ((TextView) findViewById(R.id.text_display_username)).setText(task.getResult().getValue().toString())
-        );
+        for (UserInfo profile : user.getProviderData()) {
+            ((TextView) findViewById(R.id.text_display_username)).setText(profile.getDisplayName());
+            ((TextView) findViewById(R.id.text_display_email)).setText(profile.getEmail());
+        }
 
-        TextView email = (TextView) findViewById(R.id.text_display_email);
-        email.setText(user.getEmail());
 
         dbRef.child("reputation").get().addOnCompleteListener(task ->
                 ((TextView) findViewById(R.id.text_display_reputation)).setText(task.getResult().getValue().toString())

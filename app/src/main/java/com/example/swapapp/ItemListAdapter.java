@@ -14,14 +14,16 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ItemListAdapter extends BaseAdapter {
     Context context;
-    String[] ids;
+    ArrayList<String> ids;
     private static LayoutInflater inflater = null;
 
-    public ItemListAdapter(Context context, String[] ids) {
+    public ItemListAdapter(Context context, ArrayList<String> ids) {
         this.context = context;
         this.ids = ids;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -29,12 +31,12 @@ public class ItemListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return ids.length;
+        return ids.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return ids[position];
+        return ids.get(position);
     }
 
     @Override
@@ -47,7 +49,9 @@ public class ItemListAdapter extends BaseAdapter {
         View v = convertView;
         if (v == null)
             v = inflater.inflate(R.layout.list_item, null);
-        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("items").child(ids[position]);
+
+            DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("items").child(ids.get(position));
+
         TextView text = v.findViewById(R.id.item_name);
         dbRef.child("name").get().addOnCompleteListener(task ->
                 text.setText(String.valueOf(task.getResult().getValue())));

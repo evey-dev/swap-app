@@ -10,6 +10,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -82,9 +84,16 @@ public class SignupActivity extends Activity {
                 FirebaseDatabase db = FirebaseDatabase.getInstance();
                 DatabaseReference dbRef = db.getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                dbRef.child("username").setValue(usernameInput.getEditText().getText().toString());
-                dbRef.child("email").setValue(email);
-                dbRef.child("password").setValue(password);
+                dbRef.child("description").setValue("No description set");
+                dbRef.child("reputation").setValue(0);
+                dbRef.child("profile_image").setValue("item_pictures/default.jpg");
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(usernameInput.getEditText().getText().toString())
+                        .build();
+
+                user.updateProfile(profileUpdates);
             }
             if(!task.isSuccessful()) {
                 try {
