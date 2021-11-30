@@ -34,7 +34,6 @@ public class MyProfileActivity extends Activity {
         DatabaseReference dbRef = db.getReference("users").child(user.getUid());
 
         button_back.setOnClickListener(v -> {
-            startActivity(new Intent(MyProfileActivity.this, HomeActivity.class));
             finish();
         });
 

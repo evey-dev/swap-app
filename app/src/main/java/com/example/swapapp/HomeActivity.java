@@ -2,6 +2,7 @@ package com.example.swapapp;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,12 +27,13 @@ import java.util.ArrayList;
 public class HomeActivity extends Activity {
     private FirebaseUser user;
 
-    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        findViewById(R.id.button_view_profile).setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, MyProfileActivity.class)));
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
