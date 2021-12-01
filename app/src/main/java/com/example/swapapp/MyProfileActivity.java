@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ public class MyProfileActivity extends Activity {
 
         Button button_back = findViewById(R.id.button_back);
         Button button_save = findViewById(R.id.button_save);
+        TextView text_description_save_confirmation = findViewById(R.id.text_description_save_confirmation);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = db.getReference("users").child(user.getUid());
@@ -69,9 +71,9 @@ public class MyProfileActivity extends Activity {
 
         button_save.setOnClickListener(view -> {
             String newDescription = description.getEditText().getText().toString();
-            //update description on firebase
+            dbRef.child("description").setValue(newDescription);
 
-            //show update confirmation
+            text_description_save_confirmation.setVisibility(View.VISIBLE);
         });
     }
 }
