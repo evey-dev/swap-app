@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,7 +32,6 @@ public class MyProfileActivity extends Activity {
 
         Button button_back = findViewById(R.id.button_back);
         Button button_save = findViewById(R.id.button_save);
-        TextView text_description_save_confirmation = findViewById(R.id.text_description_save_confirmation);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference dbRef = db.getReference("users").child(user.getUid());
@@ -68,12 +69,24 @@ public class MyProfileActivity extends Activity {
         dbRef.child("description").get().addOnCompleteListener(task ->
                 ((TextInputLayout) findViewById(R.id.input_description)).getEditText().setText(task.getResult().getValue().toString())
         );
-
+        description.addOnEditTextAttachedListener(textInputLayout -> {
+            description.setErrorEnabled(false);
+        });
+        Toast toast = Toast.makeText(this, "Your new description has been saved", Toast.LENGTH_SHORT);
         button_save.setOnClickListener(view -> {
             String newDescription = description.getEditText().getText().toString();
+            if(description.getEditText().getText().length() < 1) {
+                description.setError("Please input a description");
+                return;
+            }
+            if(description.getEditText().getText().length() > 100) {
+                description.setError("Your description cannot be longer than 100 characters");
+                return;
+            }
+            description.setErrorEnabled(false);
             dbRef.child("description").setValue(newDescription);
 
-            text_description_save_confirmation.setVisibility(View.VISIBLE);
+            toast.show();
         });
     }
 }
