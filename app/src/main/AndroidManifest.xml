@@ -9,6 +9,7 @@
         android:roundIcon="@drawable/atlas_logo_green"
         android:supportsRtl="true"
         android:theme="@style/Theme.SwapApp"
+        android:requestLegacyExternalStorage="true"
         >
         <activity
             android:name=".MainActivity"

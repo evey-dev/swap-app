@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -58,18 +60,10 @@ public class ItemListAdapter extends BaseAdapter {
 
         CircleImageView image = v.findViewById(R.id.item_image);
 
+
         dbRef.child("image").get().addOnCompleteListener(task -> {
             StorageReference photoReference = FirebaseStorage.getInstance().getReference().child(String.valueOf(task.getResult().getValue()));
-            try {
-                final File localFile = File.createTempFile("temp","jpg");
-                photoReference.getFile(localFile)
-                        .addOnSuccessListener(taskSnapshot -> {
-                            Bitmap bitmap = BitmapFactory.decodeFile(localFile.getAbsolutePath());
-                            image.setImageBitmap(bitmap);
-                        });
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            GlideApp.with(context).load(photoReference).into(image);
         });
 
         return v;
