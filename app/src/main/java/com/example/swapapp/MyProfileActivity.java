@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,14 +16,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -31,11 +38,16 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
 
 public class MyProfileActivity extends Activity {
-    Uri imageUri;
     ImageView pfp;
-    StorageReference mStorageReference;
+    StorageReference mStorageReference = FirebaseStorage.getInstance().getReference();
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference dbRef = db.getReference("users").child(user.getUid());
+    StorageReference photoReference;
+    boolean Default;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,58 +59,22 @@ public class MyProfileActivity extends Activity {
         Button button_upload_pfp = findViewById(R.id.button_upload_pfp);
         pfp = (ImageView) findViewById(R.id.image_user_pfp);
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        DatabaseReference dbRef = db.getReference("users").child(user.getUid());
-
-        ProgressDialog progressDialog = new ProgressDialog(this);
-
-
-        button_back.setOnClickListener(v -> {
-            finish();
-        });
-
         dbRef.child("profile_image").get().addOnCompleteListener(task -> {
-            StorageReference photoReference = FirebaseStorage.getInstance().getReference().child(String.valueOf(task.getResult().getValue()));
-            GlideApp.with(this).load(photoReference).into(pfp);
+            photoReference = FirebaseStorage.getInstance().getReference().child(String.valueOf(task.getResult().getValue()));
+            GlideApp.with(this).load(photoReference).signature(new ObjectKey(System.currentTimeMillis())).into(pfp);
         });
+
+        button_back.setOnClickListener(view -> finish());
 
         button_upload_pfp.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(intent, 100);
-
-            progressDialog.setTitle("Uploading File...");
-            progressDialog.show();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.US);
-            Date now = new Date();
-            String fileName = formatter.format(now);
-            mStorageReference = FirebaseStorage.getInstance().getReference("images/"+fileName);
-            mStorageReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    if(progressDialog.isShowing())
-                        progressDialog.dismiss();
-                    pfp.setImageURI(null);
-                    Toast.makeText(MyProfileActivity.this, "Successfully Uploaded", Toast.LENGTH_SHORT).show();
-
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    if(progressDialog.isShowing())
-                        progressDialog.dismiss();
-                    Toast.makeText(MyProfileActivity.this, "Failed to Upload", Toast.LENGTH_SHORT).show();
-                }
-            });
+            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, 3);
         });
 
         for (UserInfo profile : user.getProviderData()) {
             ((TextView) findViewById(R.id.text_display_username)).setText(profile.getDisplayName());
             ((TextView) findViewById(R.id.text_display_email)).setText(profile.getEmail());
         }
-
 
         dbRef.child("reputation").get().addOnCompleteListener(task ->
                 ((TextView) findViewById(R.id.text_display_reputation)).setText(task.getResult().getValue().toString())
@@ -129,12 +105,38 @@ public class MyProfileActivity extends Activity {
         });
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK && data != null) {
+            dbRef.child("profile_image").get().addOnCompleteListener(task -> {
+                if(task.getResult().getValue().toString().equals("user_profiles/default.jpg")) {
+                    Default = true;
+                } else {
+                    Default = false;
+                }
+                photoReference = FirebaseStorage.getInstance().getReference().child(String.valueOf(task.getResult().getValue()));
 
-        if(requestCode == 100 && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            pfp.setImageURI(imageUri);
+                Uri selectedImage = data.getData();
+                ImageView pfp = (ImageView) findViewById(R.id.image_user_pfp);
+                String imageName = "user_profiles/"+selectedImage.getLastPathSegment();
+
+                StorageReference newpfp = mStorageReference.child(imageName);
+                UploadTask uploadTask = newpfp.putFile(selectedImage);
+
+                uploadTask.addOnFailureListener(e -> {
+                    Toast.makeText(this, "Something went wrong please try again", Toast.LENGTH_SHORT).show();
+                }).addOnSuccessListener(taskSnapshot -> {
+                    pfp.setImageURI(selectedImage);
+                    Toast.makeText(this, "Image successfully uploaded", Toast.LENGTH_SHORT).show();
+                    dbRef.child("profile_image").setValue(imageName);
+                });
+
+                if(!Default) {
+                    photoReference.delete().addOnSuccessListener(runnable -> {
+                    });
+                }
+            });
         }
     }
 }
