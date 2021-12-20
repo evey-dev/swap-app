@@ -38,7 +38,8 @@
             android:backgroundTint="#cacaca"
             android:text="upload image"
             android:layout_marginHorizontal="5dp"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white"
+            android:layout_marginBottom="5dp"/>
 
         <TextView
             android:layout_width="wrap_content"

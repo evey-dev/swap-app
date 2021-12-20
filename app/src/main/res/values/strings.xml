@@ -26,5 +26,6 @@
     <string name="button_view_profile">View Profile</string>
     <string name="text_empty_list_view">You have no items listed</string>
     <string name="button_save">Save</string>
+    <string name="button_save_item">Search for matches</string>
 
 </resources>

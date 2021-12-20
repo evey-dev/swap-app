@@ -1,25 +1,23 @@
 package com.example.swapapp;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -47,10 +45,14 @@ public class HomeActivity extends Activity {
         ListView itemList = findViewById(R.id.item_list);
         itemList.setEmptyView(findViewById(R.id.empty_list_text));
 
+        findViewById(R.id.button_list_new).setOnClickListener(v ->
+                startActivity(new Intent(HomeActivity.this, ListNewActivity.class)));
+
         ArrayList<String> ids = new ArrayList<String>();
         db.getReference("items").orderByChild("uid").equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
+                ids.clear();
                 for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
                     ids.add(itemSnapshot.getKey());
                 }
@@ -63,6 +65,11 @@ public class HomeActivity extends Activity {
             public void onCancelled(@NonNull DatabaseError error) {}
         });
 
+        itemList.setOnItemClickListener((AdapterView.OnItemClickListener) (adapterView, view, i, l) -> {
+            Intent intent = new Intent(HomeActivity.this, ListNewActivity.class);
+            intent.putExtra("item_id", ids.get(i));
+            startActivity(intent);
+        });
 
     }
 }

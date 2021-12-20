@@ -73,7 +73,4 @@
         android:text="@string/button_list_new"
         android:elevation="5dp"
         android:stateListAnimator="@null"/>
-
-
-
 </LinearLayout>
