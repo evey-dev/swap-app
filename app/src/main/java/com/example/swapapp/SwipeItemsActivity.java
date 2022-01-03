@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,6 +37,8 @@ public class SwipeItemsActivity extends Activity {
 
     private TextView name;
     private TextView desc;
+
+    private boolean outOfItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,17 +80,24 @@ public class SwipeItemsActivity extends Activity {
             userItemCount = task.getResult().getValue(Integer.class);
         });
 
+        mCards.add(new SwipeCard("abcdefg"));
+
         DatabaseReference childCount = db.getReference().child("item_count");
         childCount.get().addOnCompleteListener(task -> {
             int totalItems = task.getResult().getValue(Integer.class);
+            Log.d(null, Integer.toString(totalItems));
+            Log.d(null, Integer.toString(userItemCount));
+            Log.d(null, Integer.toString(trades.size()));
             if (totalItems - userItemCount - trades.size() <= 0) {
-                Log.d(null, "there are no items left");
-            } else {
-                Log.d(null, "there are items left");
+                Log.d(null, "first checkpoint");
+                if(task.isSuccessful()) {
+                    Log.d(null, "second checkpoint");
+                    startActivity(new Intent(SwipeItemsActivity.this, OutOfItems.class));
+                    finish();
+                }
             }
         });
 
-        mCards.add(new SwipeCard("abcdefg"));
         updateCard();
 
         flingContainer.setAdapter(arrayAdapter);
@@ -122,7 +132,6 @@ public class SwipeItemsActivity extends Activity {
                         // trade goes here
                     }
                 });
-
                 updateCard();
             }
 
@@ -148,6 +157,12 @@ public class SwipeItemsActivity extends Activity {
     }
 
     private void updateCard() {
+        if (outOfItems) {
+            Log.d(null, "out of item");
+            startActivity(new Intent(SwipeItemsActivity.this, OutOfItems.class));
+            finish();
+        }
+
         DatabaseReference cardRef = db.getReference("items").child(mCards.get(0).getId());
         cardRef.get().addOnCompleteListener(task -> {
             name.setText(task.getResult().child("name").getValue(String.class));
@@ -160,13 +175,14 @@ public class SwipeItemsActivity extends Activity {
         childCount.get().addOnCompleteListener(task -> {
             int totalItems = task.getResult().getValue(Integer.class);
             if (totalItems - userItemCount - trades.size() > 0) {
+                Log.d(null, "not out of items: " + Integer.toString(totalItems - userItemCount - trades.size()));
                 DatabaseReference itemsList = db.getReference("items");
                 itemsList.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         boolean searching = true;
                         while (searching) {
-                            int rand = (int) Math.floor(Math.random() * 5);
+                            int rand = (int) Math.floor(Math.random() * totalItems);
                             Iterator iterator = snapshot.getChildren().iterator();
                             for (int i = 0; i < rand; i++) {
                                 iterator.next();
@@ -188,7 +204,9 @@ public class SwipeItemsActivity extends Activity {
                     }
                 });
             } else {
-
+                outOfItems = true;
+                mCards.add(new SwipeCard("abcdefg"));
+                Log.d(null, "out of items is true");
             }
         });
     }

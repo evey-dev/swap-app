@@ -2,7 +2,7 @@
     <string name="app_name">Swap App</string>
     <string name="my_app_id">mystitchapp-qwern</string>
 
-<!--    Text     -->
+    <!--    Text     -->
     <string name="text_login">Log in</string>
     <string name="text_no_account">Don\'t have an account?</string>
     <string name="text_signup">Sign Up</string>
@@ -11,14 +11,14 @@
     <string name="text_forgot_password_description">Enter your email to receive account recovery instructions</string>
     <string name="text_email_confirmation">Password recovery successful. Please check your email.</string>
 
-<!--    Buttons  -->
+    <!--    Buttons  -->
     <string name="button_send">Send</string>
     <string name="button_forgot_password">Forgot Password?</string>
     <string name="button_confirm">Confirm</string>
     <string name="button_list_new">List New</string>
     <string name="button_back">back</string>
 
-<!--    Hints    -->
+    <!--    Hints    -->
     <string name="input_email_hint">Email</string>
     <string name="input_password_hint">Password</string>
     <string name="input_repeat_password_hint">Repeat Password</string>
@@ -27,5 +27,14 @@
     <string name="text_empty_list_view">You have no items listed</string>
     <string name="button_save">Save</string>
     <string name="button_save_item">Search for matches</string>
+    <string name="title_activity_out_of_items">OutOfItems</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
 </resources>
