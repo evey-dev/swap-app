@@ -54,7 +54,7 @@ public class SwipeCardAdapter extends BaseAdapter {
             convertView = mLayoutInflater.inflate(R.layout.swipe_item, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.image = (TextView) convertView.findViewById(R.id.card_image);
+            viewHolder.image = (ImageView) convertView.findViewById(R.id.card_image);
 
             convertView.setTag(viewHolder);
         } else {
@@ -63,12 +63,16 @@ public class SwipeCardAdapter extends BaseAdapter {
 
         String id = ((SwipeCard) this.getItem(position)).getId();
         DatabaseReference item = db.getReference("items").child(id);
-        viewHolder.image.setText("test");
+
+        item.child("image").get().addOnCompleteListener(task -> {
+            StorageReference photoReference = FirebaseStorage.getInstance().getReference().child(String.valueOf(task.getResult().getValue()));
+            GlideApp.with(mContext).load(photoReference).into(viewHolder.image);
+        });
 
         return convertView;
     }
 
     private static class ViewHolder {
-        public TextView image;
+        public ImageView image;
     }
 }

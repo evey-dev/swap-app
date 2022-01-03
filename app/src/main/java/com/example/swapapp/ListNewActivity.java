@@ -26,7 +26,6 @@ public class ListNewActivity extends Activity {
     FirebaseDatabase db = FirebaseDatabase.getInstance();
     StorageReference photoReference;
     DatabaseReference dbRef;
-
     boolean Default;
 
     @Override
@@ -40,6 +39,7 @@ public class ListNewActivity extends Activity {
         TextInputLayout description = findViewById(R.id.input_description);
         TextInputLayout name = findViewById(R.id.input_name);
         String item_id;
+        String uid;
 
         Intent intent = getIntent();
         if (intent.hasExtra("item_id")) {
@@ -47,14 +47,19 @@ public class ListNewActivity extends Activity {
         }
         else {
             item_id = "" + System.currentTimeMillis();
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             db.getReference("items").child(item_id).child("description").setValue("No description set");
             db.getReference("items").child(item_id).child("image").setValue("item_pictures/default.png");
             db.getReference("items").child(item_id).child("name").setValue("No name set");
-            db.getReference("items").child(item_id).child("uid").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            db.getReference("items").child(item_id).child("uid").setValue(uid);
             db.getReference("items").child(item_id).child("view_count").setValue(0);
             db.getReference("item_count").get().addOnCompleteListener(task -> {
                 db.getReference("item_count").setValue(task.getResult().getValue(Integer.class) + 1);
             });
+            db.getReference("users").child(uid).child("item_count").get().addOnCompleteListener(task -> {
+               db.getReference("users").child(uid).child("item_count").setValue(task.getResult().getValue(Integer.class) + 1);
+            });
+
         }
 
         item_image = (ImageView) findViewById(R.id.image_item);
