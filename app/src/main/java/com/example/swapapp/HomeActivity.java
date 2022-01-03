@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,8 +46,11 @@ public class HomeActivity extends Activity {
         ListView itemList = findViewById(R.id.item_list);
         itemList.setEmptyView(findViewById(R.id.empty_list_text));
 
-        findViewById(R.id.button_list_new).setOnClickListener(v ->
-                startActivity(new Intent(HomeActivity.this, ListNewActivity.class)));
+        findViewById(R.id.button_list_new).setOnClickListener(v -> {
+            Intent intent = new Intent(HomeActivity.this, ListNewActivity.class);
+            intent.putExtra("swipe_or_save", true);
+            startActivity(intent);
+        });
 
         ArrayList<String> ids = new ArrayList<String>();
         db.getReference("items").orderByChild("uid").equalTo(user.getUid()).addValueEventListener(new ValueEventListener() {
@@ -68,8 +72,8 @@ public class HomeActivity extends Activity {
         itemList.setOnItemClickListener((AdapterView.OnItemClickListener) (adapterView, view, i, l) -> {
             Intent intent = new Intent(HomeActivity.this, ListNewActivity.class);
             intent.putExtra("item_id", ids.get(i));
+            intent.putExtra("swipe_or_save", false);
             startActivity(intent);
         });
-
     }
 }

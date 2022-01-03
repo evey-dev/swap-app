@@ -8,17 +8,27 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.signature.ObjectKey;
+import com.google.android.gms.common.data.DataBufferObserverSet;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 
 public class SwipeCardAdapter extends BaseAdapter {
     Context mContext;
     LayoutInflater mLayoutInflater;
     ArrayList mSwipeCardArrayList;
+    FirebaseDatabase db;
+    StorageReference photoReference;
 
     public SwipeCardAdapter(Context context, LayoutInflater layoutInflater, ArrayList<SwipeCard> swipeCardArraylist) {
         this.mContext = context;
         this.mLayoutInflater = layoutInflater;
         this.mSwipeCardArrayList = swipeCardArraylist;
+        db = FirebaseDatabase.getInstance();
     }
 
     @Override
@@ -44,26 +54,21 @@ public class SwipeCardAdapter extends BaseAdapter {
             convertView = mLayoutInflater.inflate(R.layout.swipe_item, parent, false);
 
             viewHolder = new ViewHolder();
-//            viewHolder.textView1 = (TextView) convertView.findViewById(R.id.cardItemText1);
-//            viewHolder.textView2 = (TextView) convertView.findViewById(R.id.cardItemText2);
-            viewHolder.image = (ImageView) convertView.findViewById(R.id.card_image);
+            viewHolder.image = (TextView) convertView.findViewById(R.id.card_image);
 
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        SwipeCard sw = (SwipeCard) mSwipeCardArrayList.get(position);
-
-//        viewHolder.textView1.setText(sw.getText1());
-//        viewHolder.textView2.setText(sw.getId());
-        Glide.with(mContext).load(mContext.getResources().getIdentifier(sw.getId(),"drawable",mContext.getPackageName())).into(viewHolder.image);
+        String id = ((SwipeCard) this.getItem(position)).getId();
+        DatabaseReference item = db.getReference("items").child(id);
+        viewHolder.image.setText("test");
 
         return convertView;
     }
 
     private static class ViewHolder {
-        public TextView textView1, textView2;
-        public ImageView image;
+        public TextView image;
     }
 }
