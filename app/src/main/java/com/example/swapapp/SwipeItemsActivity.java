@@ -38,8 +38,6 @@ public class SwipeItemsActivity extends Activity {
     private TextView name;
     private TextView desc;
 
-    private boolean outOfItems;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
