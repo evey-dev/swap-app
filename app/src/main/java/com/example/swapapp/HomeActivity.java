@@ -61,7 +61,6 @@ public class HomeActivity extends Activity {
                     ids.add(itemSnapshot.getKey());
                 }
                 ItemListAdapter adapter = new ItemListAdapter(HomeActivity.this, ids);
-                Log.d("home", ids.toString());
                 itemList.setAdapter(adapter);
             }
 

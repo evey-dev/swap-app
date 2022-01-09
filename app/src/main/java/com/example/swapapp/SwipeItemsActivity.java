@@ -80,32 +80,31 @@ public class SwipeItemsActivity extends Activity {
             userItemCount = task.getResult().getValue(Integer.class);
         });
 
-        mCards.add(new SwipeCard("abcdefg"));
+        mCards.add(new SwipeCard("1641247844499"));
 
         DatabaseReference childCount = db.getReference().child("item_count");
         childCount.get().addOnCompleteListener(task -> {
             int totalItems = task.getResult().getValue(Integer.class);
-            Log.d(null, Integer.toString(totalItems));
-            Log.d(null, Integer.toString(userItemCount));
-            Log.d(null, Integer.toString(trades.size()));
-            if (totalItems - userItemCount - trades.size() <= 0) {
-                Log.d(null, "first checkpoint");
+            if (trades.contains("1641247844499")) {
+                totalItems++;
+            }
+
+            if (totalItems - 1 - userItemCount - trades.size() <= 0) {
                 if(task.isSuccessful()) {
-                    Log.d(null, "second checkpoint");
                     startActivity(new Intent(SwipeItemsActivity.this, OutOfItems.class));
                     finish();
                 }
             }
         });
 
-        updateCard();
+        name.setText("Example Item");
+        desc.setText("This is an example item! \nSwipe left to reject\nSwipe right to accept.");
 
         flingContainer.setAdapter(arrayAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
                 // this is the simplest way to delete an object from the Adapter (/AdapterView)
-                Log.d("LIST", "removed object!");
                 mCards.remove(0);
                 arrayAdapter.notifyDataSetChanged();
             }
@@ -137,6 +136,7 @@ public class SwipeItemsActivity extends Activity {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
+                Log.d(null, "adapater about to empty");
                 getNewCardsTest(mCards);
             }
 
@@ -147,7 +147,6 @@ public class SwipeItemsActivity extends Activity {
 
         });
 
-        // Optionally add an OnItemClickListener
         flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
             @Override
             public void onItemClicked(int itemPosition, Object dataObject) {
@@ -157,8 +156,7 @@ public class SwipeItemsActivity extends Activity {
     }
 
     private void updateCard() {
-        if (outOfItems) {
-            Log.d(null, "out of item");
+        if (mCards.get(0).getId().equals("1641247844499")) {
             startActivity(new Intent(SwipeItemsActivity.this, OutOfItems.class));
             finish();
         }
@@ -171,11 +169,15 @@ public class SwipeItemsActivity extends Activity {
     }
 
     public void getNewCardsTest(ArrayList<SwipeCard> cards) {
+        Log.d(null, "check one");
         DatabaseReference childCount = db.getReference().child("item_count");
         childCount.get().addOnCompleteListener(task -> {
+            Log.d(null, "check two");
             int totalItems = task.getResult().getValue(Integer.class);
-            if (totalItems - userItemCount - trades.size() > 0) {
-                Log.d(null, "not out of items: " + Integer.toString(totalItems - userItemCount - trades.size()));
+            Log.d(null, "check three");
+
+            if (totalItems - userItemCount - trades.size() - mCards.size() + 1 > 0) {
+                Log.d(null, "items left to add");
                 DatabaseReference itemsList = db.getReference("items");
                 itemsList.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -190,7 +192,11 @@ public class SwipeItemsActivity extends Activity {
 
                             DataSnapshot selected = (DataSnapshot) iterator.next();
                             String id = selected.getKey();
-                            if (!selected.child("uid").getValue(String.class).equals(uid) && !trades.contains(id)) {
+                            ArrayList<String> cardStrings = new ArrayList<String>();
+                            for (SwipeCard mCard : mCards) {
+                                cardStrings.add(mCard.getId());
+                            }
+                            if (!selected.child("uid").getValue(String.class).equals(uid) && !trades.contains(id) && !cardStrings.contains(id) && !id.equals("1641247844499")) {
                                 SwipeCard card = new SwipeCard(id);
                                 cards.add(card);
                                 searching = false;
@@ -204,9 +210,14 @@ public class SwipeItemsActivity extends Activity {
                     }
                 });
             } else {
-                outOfItems = true;
-                mCards.add(new SwipeCard("abcdefg"));
-                Log.d(null, "out of items is true");
+                Log.d(null, "no items left to add");
+                cards.add(new SwipeCard("1641247844499"));
+                cards.add(new SwipeCard("1641247844499"));
+                cards.add(new SwipeCard("1641247844499"));
+                cards.add(new SwipeCard("1641247844499"));
+                cards.add(new SwipeCard("1641247844499"));
+                cards.add(new SwipeCard("1641247844499"));
+                cards.add(new SwipeCard("1641247844499"));
             }
         });
     }
