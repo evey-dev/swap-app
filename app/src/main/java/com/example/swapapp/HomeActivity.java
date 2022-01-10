@@ -58,7 +58,9 @@ public class HomeActivity extends Activity {
             public void onDataChange(DataSnapshot snapshot) {
                 ids.clear();
                 for (DataSnapshot itemSnapshot : snapshot.getChildren()) {
-                    ids.add(itemSnapshot.getKey());
+                    if (!itemSnapshot.hasChild("hide")) {
+                        ids.add(itemSnapshot.getKey());
+                    }
                 }
                 ItemListAdapter adapter = new ItemListAdapter(HomeActivity.this, ids);
                 itemList.setAdapter(adapter);
@@ -69,10 +71,20 @@ public class HomeActivity extends Activity {
         });
 
         itemList.setOnItemClickListener((AdapterView.OnItemClickListener) (adapterView, view, i, l) -> {
-            Intent intent = new Intent(HomeActivity.this, ListNewActivity.class);
-            intent.putExtra("item_id", ids.get(i));
-            intent.putExtra("swipe_or_save", false);
-            startActivity(intent);
+            db.getReference("items").child(ids.get(i)).get().addOnCompleteListener(task -> {
+                if(task.getResult().hasChild("traded")) {
+                    Intent tradeIntent = new Intent(HomeActivity.this, TradeCompleteActivity.class);
+                    tradeIntent.putExtra("itemid", task.getResult().getKey());
+                    tradeIntent.putExtra("otherid", task.getResult().child("traded").getValue(String.class));
+                    startActivity(tradeIntent);
+                } else {
+                    Intent intent = new Intent(HomeActivity.this, ListNewActivity.class);
+                    intent.putExtra("item_id", ids.get(i));
+                    intent.putExtra("swipe_or_save", false);
+                    startActivity(intent);
+                }
+            });
+
         });
     }
 }

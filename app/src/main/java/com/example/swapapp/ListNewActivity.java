@@ -90,41 +90,37 @@ public class ListNewActivity extends Activity {
         Toast toast = Toast.makeText(this, "Your item has been saved", Toast.LENGTH_SHORT);
 
         button_save.setOnClickListener(view -> {
-            boolean swipe_or_save = intent.getBooleanExtra("swipe_or_save", true);
-            if (swipe_or_save) {
-                String newDescription = description.getEditText().getText().toString();
-                if(description.getEditText().getText().length() < 1) {
-                    description.setError("Please input a description");
-                    return;
-                }
-                if(description.getEditText().getText().length() > 100) {
-                    description.setError("Your description cannot be longer than 100 characters");
-                    return;
-                }
-                description.setErrorEnabled(false);
-                dbRef.child("description").setValue(newDescription);
-
-                String newName = name.getEditText().getText().toString();
-                if(name.getEditText().getText().length() < 1) {
-                    name.setError("Please input an item name");
-                    return;
-                }
-                if(name.getEditText().getText().length() > 20) {
-                    name.setError("Your item name cannot be longer than 20 characters");
-                    return;
-                }
-                name.setErrorEnabled(false);
-                dbRef.child("name").setValue(newName);
-
-                DatabaseReference tradeRef = db.getReference().child("trades").child(item_id).child("1641247844499");
-                tradeRef.setValue(false);
-
-                toast.show();
-            } else {
-                Intent swipeIntent = new Intent(ListNewActivity.this, SwipeItemsActivity.class);
-                swipeIntent.putExtra("item_id", item_id);
-                startActivity(swipeIntent);
+            String newDescription = description.getEditText().getText().toString();
+            if(description.getEditText().getText().length() < 1) {
+                description.setError("Please input a description");
+                return;
             }
+            if(description.getEditText().getText().length() > 100) {
+                description.setError("Your description cannot be longer than 100 characters");
+                return;
+            }
+            description.setErrorEnabled(false);
+            dbRef.child("description").setValue(newDescription);
+
+            String newName = name.getEditText().getText().toString();
+            if(name.getEditText().getText().length() < 1) {
+                name.setError("Please input an item name");
+                return;
+            }
+            if(name.getEditText().getText().length() > 20) {
+                name.setError("Your item name cannot be longer than 20 characters");
+                return;
+            }
+            name.setErrorEnabled(false);
+            dbRef.child("name").setValue(newName);
+
+            DatabaseReference tradeRef = db.getReference().child("trades").child(item_id).child("1641247844499");
+            tradeRef.setValue(false);
+
+            toast.show();
+            Intent swipeIntent = new Intent(ListNewActivity.this, SwipeItemsActivity.class);
+            swipeIntent.putExtra("item_id", item_id);
+            startActivity(swipeIntent);
         });
     }
 

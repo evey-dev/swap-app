@@ -101,6 +101,8 @@ public class TradeCompleteActivity extends Activity {
                         int currentRep = utask.getResult().getValue(Integer.class);
                         Log.d(null, Integer.toString(currentRep));
                         userref.setValue(currentRep + 1);
+                        db.getReference("items").child(itemid).child("hide").setValue(true);
+                        finish();
                     });
                 });
             }
@@ -117,6 +119,8 @@ public class TradeCompleteActivity extends Activity {
                         int currentRep = utask.getResult().getValue(Integer.class);
                         Log.d(null, Integer.toString(currentRep));
                         userref.setValue(currentRep - 1);
+                        db.getReference("items").child(itemid).child("hide").setValue(true);
+                        finish();
                     });
                 });
             }
