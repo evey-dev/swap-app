@@ -76,6 +76,7 @@ public class SwipeItemsActivity extends Activity {
         DatabaseReference userCount = db.getReference("users").child(uid).child("item_count");
         userCount.get().addOnCompleteListener(task -> {
             userItemCount = task.getResult().getValue(Integer.class);
+            Log.d(null, "userItemCount = " + Integer.toString(userItemCount));
         });
 
         mCards.add(new SwipeCard("1641247844499"));
@@ -83,16 +84,17 @@ public class SwipeItemsActivity extends Activity {
         DatabaseReference childCount = db.getReference().child("item_count");
         childCount.get().addOnCompleteListener(task -> {
             int totalItems = task.getResult().getValue(Integer.class);
-            if (trades.contains("1641247844499")) {
-                totalItems++;
-            }
-
-            if (totalItems - 1 - userItemCount - trades.size() <= 0) {
-                if(task.isSuccessful()) {
-                    startActivity(new Intent(SwipeItemsActivity.this, OutOfItems.class));
-                    finish();
+            Log.d(null, "totalItems = " + Integer.toString(totalItems));
+            DatabaseReference tradeCount = db.getReference("trade_count");
+            tradeCount.get().addOnCompleteListener(ttask -> {
+                int totalTrades = ttask.getResult().getValue(Integer.class);
+                if (totalItems - totalTrades - userItemCount - trades.size() <= 0) {
+                    if(task.isSuccessful()) {
+                        startActivity(new Intent(SwipeItemsActivity.this, OutOfItems.class));
+                        finish();
+                    }
                 }
-            }
+            });
         });
 
         name.setText("Example Item");
@@ -125,8 +127,23 @@ public class SwipeItemsActivity extends Activity {
 
                 DatabaseReference checkTrade = db.getReference("trades").child(objectId);
                 checkTrade.get().addOnCompleteListener(task -> {
+                    Log.d(null, "check one: " + task.getResult().hasChild(itemid));
+                    Log.d(null, "check two: " + task.getResult().child(itemid).getValue(Boolean.class));
                     if (task.getResult().hasChild(itemid) && task.getResult().child(itemid).getValue(Boolean.class)) {
-                        // trade goes here
+                        db.getReference("items").child(itemid).child("traded").setValue(objectId);
+                        db.getReference("items").child(objectId).child("traded").setValue(itemid);
+
+                        DatabaseReference tradeCount = db.getReference("trade_count");
+                        tradeCount.get().addOnCompleteListener(ttask->{
+                           int tradeNum = ttask.getResult().getValue(Integer.class);
+                           tradeCount.setValue(tradeNum + 2);
+                        });
+
+                        Intent tradeIntent = new Intent(SwipeItemsActivity.this, TradeCompleteActivity.class);
+                        tradeIntent.putExtra("itemid", itemid);
+                        tradeIntent.putExtra("otherid", objectId);
+                        startActivity(tradeIntent);
+                        finish();
                     }
                 });
                 updateCard();
@@ -134,7 +151,6 @@ public class SwipeItemsActivity extends Activity {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                Log.d(null, "adapater about to empty");
                 getNewCardsTest(mCards);
             }
 
@@ -142,7 +158,6 @@ public class SwipeItemsActivity extends Activity {
             public void onScroll(float scrollProgressPercent) {
 
             }
-
         });
 
         flingContainer.setOnItemClickListener(new SwipeFlingAdapterView.OnItemClickListener() {
@@ -167,56 +182,55 @@ public class SwipeItemsActivity extends Activity {
     }
 
     public void getNewCardsTest(ArrayList<SwipeCard> cards) {
-        Log.d(null, "check one");
         DatabaseReference childCount = db.getReference().child("item_count");
         childCount.get().addOnCompleteListener(task -> {
-            Log.d(null, "check two");
             int totalItems = task.getResult().getValue(Integer.class);
-            Log.d(null, "check three");
+            DatabaseReference tradeCount = db.getReference("trade_count");
+            tradeCount.get().addOnCompleteListener(ttask -> {
+                int totalTrades = ttask.getResult().getValue(Integer.class);
+                if (totalItems - totalTrades - userItemCount - trades.size() - mCards.size() + 1 > 0) {
+                    DatabaseReference itemsList = db.getReference("items");
+                    itemsList.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            boolean searching = true;
+                            while (searching) {
+                                int rand = (int) Math.floor(Math.random() * totalItems);
+                                Iterator iterator = snapshot.getChildren().iterator();
+                                for (int i = 0; i < rand; i++) {
+                                    iterator.next();
+                                }
 
-            if (totalItems - userItemCount - trades.size() - mCards.size() + 1 > 0) {
-                Log.d(null, "items left to add");
-                DatabaseReference itemsList = db.getReference("items");
-                itemsList.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        boolean searching = true;
-                        while (searching) {
-                            int rand = (int) Math.floor(Math.random() * totalItems);
-                            Iterator iterator = snapshot.getChildren().iterator();
-                            for (int i = 0; i < rand; i++) {
-                                iterator.next();
-                            }
+                                DataSnapshot selected = (DataSnapshot) iterator.next();
+                                String id = selected.getKey();
+                                ArrayList<String> cardStrings = new ArrayList<String>();
+                                for (SwipeCard mCard : mCards) {
+                                    cardStrings.add(mCard.getId());
+                                }
 
-                            DataSnapshot selected = (DataSnapshot) iterator.next();
-                            String id = selected.getKey();
-                            ArrayList<String> cardStrings = new ArrayList<String>();
-                            for (SwipeCard mCard : mCards) {
-                                cardStrings.add(mCard.getId());
-                            }
-                            if (!selected.child("uid").getValue(String.class).equals(uid) && !trades.contains(id) && !cardStrings.contains(id) && !id.equals("1641247844499")) {
-                                SwipeCard card = new SwipeCard(id);
-                                cards.add(card);
-                                searching = false;
+                                if (!selected.child("uid").getValue(String.class).equals(uid) && !trades.contains(id) && !cardStrings.contains(id) && !selected.hasChild("traded") && !id.equals("1641247844499")) {
+                                    SwipeCard card = new SwipeCard(id);
+                                    cards.add(card);
+                                    searching = false;
+                                }
                             }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                    }
-                });
-            } else {
-                Log.d(null, "no items left to add");
-                cards.add(new SwipeCard("1641247844499"));
-                cards.add(new SwipeCard("1641247844499"));
-                cards.add(new SwipeCard("1641247844499"));
-                cards.add(new SwipeCard("1641247844499"));
-                cards.add(new SwipeCard("1641247844499"));
-                cards.add(new SwipeCard("1641247844499"));
-                cards.add(new SwipeCard("1641247844499"));
-            }
+                        }
+                    });
+                } else {
+                    cards.add(new SwipeCard("1641247844499"));
+                    cards.add(new SwipeCard("1641247844499"));
+                    cards.add(new SwipeCard("1641247844499"));
+                    cards.add(new SwipeCard("1641247844499"));
+                    cards.add(new SwipeCard("1641247844499"));
+                    cards.add(new SwipeCard("1641247844499"));
+                    cards.add(new SwipeCard("1641247844499"));
+                }
+            });
         });
     }
 }

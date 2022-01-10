@@ -88,6 +88,8 @@ public class SignupActivity extends Activity {
                 dbRef.child("reputation").setValue(0);
                 dbRef.child("profile_image").setValue("user_profiles/default.jpg");
                 dbRef.child("item_count").setValue(0);
+                dbRef.child("email").setValue(email);
+                dbRef.child("username").setValue(usernameInput.getEditText().getText().toString());
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()

@@ -48,10 +48,12 @@ public class ListNewActivity extends Activity {
         else {
             item_id = "" + System.currentTimeMillis();
             uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
             db.getReference("items").child(item_id).child("description").setValue("No description set");
             db.getReference("items").child(item_id).child("image").setValue("item_pictures/default.png");
             db.getReference("items").child(item_id).child("name").setValue("No name set");
             db.getReference("items").child(item_id).child("uid").setValue(uid);
+
             db.getReference("items").child(item_id).child("view_count").setValue(0);
             db.getReference("item_count").get().addOnCompleteListener(task -> {
                 db.getReference("item_count").setValue(task.getResult().getValue(Integer.class) + 1);
@@ -113,6 +115,9 @@ public class ListNewActivity extends Activity {
                 }
                 name.setErrorEnabled(false);
                 dbRef.child("name").setValue(newName);
+
+                DatabaseReference tradeRef = db.getReference().child("trades").child(item_id).child("1641247844499");
+                tradeRef.setValue(false);
 
                 toast.show();
             } else {

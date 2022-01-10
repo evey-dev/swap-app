@@ -27,6 +27,7 @@
         <activity android:name=".MyProfileActivity" />
         <activity android:name=".ListNewActivity" />
         <activity android:name=".OutOfItems" />
+        <activity android:name=".TradeCompleteActivity"/>
     </application>
 
 </manifest>
