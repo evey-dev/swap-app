@@ -76,7 +76,6 @@ public class SwipeItemsActivity extends Activity {
         DatabaseReference userCount = db.getReference("users").child(uid).child("item_count");
         userCount.get().addOnCompleteListener(task -> {
             userItemCount = task.getResult().getValue(Integer.class);
-            Log.d(null, "userItemCount = " + Integer.toString(userItemCount));
         });
 
         mCards.add(new SwipeCard("1641247844499"));
@@ -84,16 +83,22 @@ public class SwipeItemsActivity extends Activity {
         DatabaseReference childCount = db.getReference().child("item_count");
         childCount.get().addOnCompleteListener(task -> {
             int totalItems = task.getResult().getValue(Integer.class);
-            Log.d(null, "totalItems = " + Integer.toString(totalItems));
+
             DatabaseReference tradeCount = db.getReference("trade_count");
             tradeCount.get().addOnCompleteListener(ttask -> {
                 int totalTrades = ttask.getResult().getValue(Integer.class);
-                if (totalItems - totalTrades - userItemCount - trades.size() <= 0) {
-                    if(task.isSuccessful()) {
-                        startActivity(new Intent(SwipeItemsActivity.this, OutOfItems.class));
-                        finish();
+
+                DatabaseReference userTradeCount = db.getReference("users").child(uid).child("trade_count");
+                userTradeCount.get().addOnCompleteListener(utask -> {
+                    int userTrades = utask.getResult().getValue(Integer.class);
+
+                    if (totalItems - totalTrades - userItemCount + userTrades - trades.size() <= 0) {
+                        if(task.isSuccessful()) {
+                            startActivity(new Intent(SwipeItemsActivity.this, OutOfItems.class));
+                            finish();
+                        }
                     }
-                }
+                });
             });
         });
 
@@ -132,6 +137,23 @@ public class SwipeItemsActivity extends Activity {
                     if (task.getResult().hasChild(itemid) && task.getResult().child(itemid).getValue(Boolean.class)) {
                         db.getReference("items").child(itemid).child("traded").setValue(objectId);
                         db.getReference("items").child(objectId).child("traded").setValue(itemid);
+
+                        DatabaseReference thisUserCount = db.getReference("users").child(uid).child("trade_count");
+                        thisUserCount.get().addOnCompleteListener(ttask->{
+                            int tradeNum = ttask.getResult().getValue(Integer.class);
+                            thisUserCount.setValue(tradeNum + 1);
+                        });
+
+                        DatabaseReference otherUser = db.getReference("items").child(objectId).child("uid");
+                        otherUser.get().addOnCompleteListener(utask -> {
+                            String otheruid = utask.getResult().getValue(String.class);
+
+                            DatabaseReference otherUserCount = db.getReference("users").child(otheruid).child("trade_count");
+                            otherUserCount.get().addOnCompleteListener(ttask->{
+                                int tradeNum = ttask.getResult().getValue(Integer.class);
+                                otherUserCount.setValue(tradeNum + 1);
+                            });
+                        });
 
                         DatabaseReference tradeCount = db.getReference("trade_count");
                         tradeCount.get().addOnCompleteListener(ttask->{
@@ -185,51 +207,57 @@ public class SwipeItemsActivity extends Activity {
         DatabaseReference childCount = db.getReference().child("item_count");
         childCount.get().addOnCompleteListener(task -> {
             int totalItems = task.getResult().getValue(Integer.class);
+
             DatabaseReference tradeCount = db.getReference("trade_count");
             tradeCount.get().addOnCompleteListener(ttask -> {
                 int totalTrades = ttask.getResult().getValue(Integer.class);
-                if (totalItems - totalTrades - userItemCount - trades.size() - mCards.size() + 1 > 0) {
-                    DatabaseReference itemsList = db.getReference("items");
-                    itemsList.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            boolean searching = true;
-                            while (searching) {
-                                int rand = (int) Math.floor(Math.random() * totalItems);
-                                Iterator iterator = snapshot.getChildren().iterator();
-                                for (int i = 0; i < rand; i++) {
-                                    iterator.next();
-                                }
 
-                                DataSnapshot selected = (DataSnapshot) iterator.next();
-                                String id = selected.getKey();
-                                ArrayList<String> cardStrings = new ArrayList<String>();
-                                for (SwipeCard mCard : mCards) {
-                                    cardStrings.add(mCard.getId());
-                                }
+                DatabaseReference userTradeCount = db.getReference("users").child(uid).child("trade_count");
+                userTradeCount.get().addOnCompleteListener(utask -> {
+                    int userTrades = utask.getResult().getValue(Integer.class);
 
-                                if (!selected.child("uid").getValue(String.class).equals(uid) && !trades.contains(id) && !cardStrings.contains(id) && !selected.hasChild("traded") && !id.equals("1641247844499")) {
-                                    SwipeCard card = new SwipeCard(id);
-                                    cards.add(card);
-                                    searching = false;
+                    if (totalItems - totalTrades - userItemCount + userTrades - trades.size() - mCards.size() + 1 > 0) {
+                        DatabaseReference itemsList = db.getReference("items");
+                        itemsList.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                boolean searching = true;
+                                while (searching) {
+                                    int rand = (int) Math.floor(Math.random() * totalItems);
+                                    Iterator iterator = snapshot.getChildren().iterator();
+                                    for (int i = 0; i < rand; i++) {
+                                        iterator.next();
+                                    }
+
+                                    DataSnapshot selected = (DataSnapshot) iterator.next();
+                                    String id = selected.getKey();
+                                    ArrayList<String> cardStrings = new ArrayList<String>();
+                                    for (SwipeCard mCard : mCards) {
+                                        cardStrings.add(mCard.getId());
+                                    }
+
+                                    if (!selected.child("uid").getValue(String.class).equals(uid) && !trades.contains(id) && !cardStrings.contains(id) && !selected.hasChild("traded") && !id.equals("1641247844499")) {
+                                        SwipeCard card = new SwipeCard(id);
+                                        cards.add(card);
+                                        searching = false;
+                                    }
                                 }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
 
-                        }
-                    });
-                } else {
-                    cards.add(new SwipeCard("1641247844499"));
-                    cards.add(new SwipeCard("1641247844499"));
-                    cards.add(new SwipeCard("1641247844499"));
-                    cards.add(new SwipeCard("1641247844499"));
-                    cards.add(new SwipeCard("1641247844499"));
-                    cards.add(new SwipeCard("1641247844499"));
-                    cards.add(new SwipeCard("1641247844499"));
-                }
+                            }
+                        });
+                    } else {
+                        cards.add(new SwipeCard("1641247844499"));
+                        cards.add(new SwipeCard("1641247844499"));
+                        cards.add(new SwipeCard("1641247844499"));
+                        cards.add(new SwipeCard("1641247844499"));
+                        cards.add(new SwipeCard("1641247844499"));
+                        cards.add(new SwipeCard("1641247844499"));
+                    }
+                });
             });
         });
     }

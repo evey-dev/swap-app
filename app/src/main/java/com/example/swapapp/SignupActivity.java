@@ -90,6 +90,7 @@ public class SignupActivity extends Activity {
                 dbRef.child("item_count").setValue(0);
                 dbRef.child("email").setValue(email);
                 dbRef.child("username").setValue(usernameInput.getEditText().getText().toString());
+                dbRef.child("trade_count").setValue(0);
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
