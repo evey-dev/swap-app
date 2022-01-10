@@ -121,6 +121,7 @@ public class ListNewActivity extends Activity {
             Intent swipeIntent = new Intent(ListNewActivity.this, SwipeItemsActivity.class);
             swipeIntent.putExtra("item_id", item_id);
             startActivity(swipeIntent);
+            finish();
         });
     }
 
