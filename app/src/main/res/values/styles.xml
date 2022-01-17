@@ -9,4 +9,10 @@
     <style name="TextLimitError" parent="TextAppearance.AppCompat.Small">
         <item name="android:textColor">@color/colorRed</item>
     </style>
+
+    <style name="SwipeFling">
+        <item name="rotation_degrees">15</item>
+        <item name="min_adapter_stack">2</item>
+        <item name="max_visible">4</item>
+    </style>
 </resources>
